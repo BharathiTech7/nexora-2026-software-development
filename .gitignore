@@ -1,0 +1,22 @@
+# Challenge dataset (Confidential - DO NOT COMMIT)
+/data/
+/03-challenge-data/
+*.zip
+
+# Python & Environment
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+env/
+venv/
+ENV/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
