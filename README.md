@@ -21,6 +21,18 @@ The supplied baseline ranking logic has been kept **unchanged**. Our contributio
 is the engineering layer: data loading, service abstraction, API design, error
 handling, and testing.
 
+
+---
+
+## 🎥 Demo Recording
+
+**Watch the complete NEXORA 2026 Software Development demo:**
+
+[▶️ Watch Demo on YouTube](https://youtu.be/xu4Q_uJruWQ)
+
+The recording demonstrates the dashboard, weekly rankings, gateway explanations,
+rerun functionality, API documentation, automated tests, and final validation.
+
 ---
 
 ## 2. Solution Architecture
