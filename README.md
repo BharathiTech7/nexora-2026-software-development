@@ -14,7 +14,8 @@ should be visited each Monday and explain why each one was selected.
 The challenge provides a working 3-sigma anomaly baseline (`baseline_3sigma.py`)
 as the ranking reference. This project is the **software layer built around that
 baseline**: a Web API that exposes ranking results, explains individual gateway
-rankings, and allows the ranking to be recomputed on demand.
+rankings, and allows the ranking to be recomputed on demand. It now also
+includes a lightweight web dashboard for interacting with the existing FastAPI API.
 
 The supplied baseline ranking logic has been kept **unchanged**. Our contribution
 is the engineering layer: data loading, service abstraction, API design, error
@@ -25,28 +26,36 @@ handling, and testing.
 ## 2. Solution Architecture
 
 ```
-Telemetry parquet files (data/telemetry/)
+Browser
         |
         v
-DataLoader              -- loads and validates parquet; caches in memory
+NEXORA Frontend Dashboard -- presentation layer; no business logic
         |
         v
-RankingStrategy         -- abstract interface; any implementation can be plugged in
+frontend/server.py      -- proxy server keeping browser same-origin
         |
         v
-Baseline3SigmaRanking   -- concrete implementation of the supplied 3-sigma logic
+FastAPI API             -- HTTP layer; translates service results to JSON responses
         |
         v
 RankingService          -- orchestrates loading + ranking; stores results; exposes query methods
         |
         v
-FastAPI                 -- HTTP layer; translates service results to JSON responses
+RankingStrategy / Baseline3SigmaRanking -- concrete implementation of the supplied 3-sigma logic
+        |
+        v
+DataLoader              -- loads and validates parquet; caches in memory
+        |
+        v
+Telemetry parquet files (data/telemetry/)
 ```
 
 **Component responsibilities:**
 
 | Component | Responsibility |
 |---|---|
+| `NEXORA Frontend Dashboard` | Lightweight presentation layer UI. Contains no business or ranking logic. |
+| `frontend/server.py` | Serves the frontend and proxies API requests to FastAPI, maintaining same-origin communication. |
 | `DataLoader` | Locates, loads, and validates the parquet telemetry. Caches in memory; reloads on demand. |
 | `RankingStrategy` | Abstract base class. Defines `rank_week` and `build_predictions`. |
 | `Baseline3SigmaRanking` | Implements `RankingStrategy` using the supplied 3-sigma methodology. |
@@ -64,6 +73,12 @@ ranking implementation can be wired in by substituting the concrete class in
 
 ```
 NEXORA-2026/
+|
++-- frontend/
+|   +-- index.html               # Frontend Dashboard UI
+|   +-- style.css                # Styling for the dashboard
+|   +-- app.js                   # UI interaction and API calls
+|   +-- server.py                # Lightweight web server and API proxy
 |
 +-- src/
 |   +-- api/
@@ -124,7 +139,7 @@ was not changed.
 
 ## 5. API
 
-Start the API (see [Section 9](#9-running-locally)):
+Start the API and Frontend (see [Section 9](#9-running-locally)):
 
 ```
 python -m uvicorn src.api.main:app --reload
@@ -383,12 +398,25 @@ python validate_submission.py predictions.csv
 
 # Run the test suite
 python -m pytest tests/ -q
+```
 
-# Start the API server
+To start the backend and frontend:
+
+**Terminal 1 (Backend API):**
+```bash
 python -m uvicorn src.api.main:app --reload
 ```
 
-The API will be available at `http://localhost:8000`.
+**Terminal 2 (Frontend Dashboard):**
+```bash
+python frontend/server.py
+```
+
+Then open your browser to the Frontend Dashboard:
+`http://127.0.0.1:5500`
+
+The FastAPI API is available directly at:
+`http://127.0.0.1:8000`
 
 The server attempts to compute rankings from the `data/` directory at startup.
 If the data directory is not yet present, the server starts cleanly and
@@ -413,7 +441,25 @@ responses. No additional setup is required.
 
 ---
 
-## 11. Design Notes
+## 11. Frontend Dashboard
+
+The project includes a lightweight presentation layer that runs in the browser. It communicates with the existing FastAPI backend through `frontend/server.py`, which serves the static files and proxies API requests. This proxy keeps the browser-to-server communication same-origin while preserving the existing FastAPI backend unchanged. 
+
+The dashboard provides the following UI capabilities:
+- API health and status monitoring
+- Weekly gateway rankings display
+- Top 15 gateways visualization
+- Gateway ranking explanations
+- Run Now / recompute rankings functionality
+- Prediction CSV download
+- Direct navigation to API Docs
+- Robust loading and error states
+
+The frontend contains **no business or ranking logic**—all logic remains entirely in the existing backend.
+
+---
+
+## 12. Design Notes
 
 **Baseline kept unchanged.** The supplied `baseline_3sigma.py` is the
 reference ranking implementation. Reproducing its output exactly and building
@@ -440,7 +486,7 @@ needs to change.
 
 ---
 
-## 12. Limitations
+## 13. Limitations
 
 - **Does not improve the anomaly detection algorithm.** The ranking method is
   the supplied 3-sigma baseline.
@@ -460,7 +506,7 @@ needs to change.
 
 ---
 
-## 13. Challenge Data
+## 14. Challenge Data
 
 The challenge telemetry dataset is confidential and **not included in this
 repository**.
@@ -479,7 +525,7 @@ tests, or documentation.
 
 ---
 
-## 14. Development Notes
+## 15. Development Notes
 
 The implementation was developed incrementally across phases: project
 structure, ranking abstraction, data loading, service layer, API, error

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXORA 2026 - Gateway Operations</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <div class="logo">
+                <i class="fa-solid fa-chart-column"></i>
+                <h1>NEXORA <span class="highlight">2026</span></h1>
+            </div>
+            <span class="divider">|</span>
+            <span class="subtitle">Gateway Operations <span class="dot">•</span> Field Visit Prioritization</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" class="active"><i class="fa-solid fa-house"></i> Dashboard</a>
+            <a href="http://127.0.0.1:8000/docs" target="_blank"><i class="fa-solid fa-book"></i> API Docs</a>
+            <div id="api-status" class="status-badge checking">
+                <span class="indicator"></span> Checking API...
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-content">
+                <h2>Smarter Field Visits. <span class="highlight">Stronger Networks.</span></h2>
+                <p>Identify the top 15 gateways each week that need field attention based on anomaly hours.</p>
+            </div>
+            <div class="hero-graphic">
+                <i class="fa-solid fa-tower-cell"></i>
+                <div class="brand-text">
+                    <h3>NEXORA 2026</h3>
+                    <p>"Data-Driven Network Reliability"</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="summary-cards">
+            <div class="card summary-card">
+                <div class="card-icon blue"><i class="fa-regular fa-calendar"></i></div>
+                <div class="card-content">
+                    <span class="label">Total Weeks</span>
+                    <h3 id="stat-weeks">-</h3>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <div class="card-icon blue"><i class="fa-solid fa-users"></i></div>
+                <div class="card-content">
+                    <span class="label">Gateways per Week</span>
+                    <h3>15</h3>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <div class="card-icon purple"><i class="fa-regular fa-file-lines"></i></div>
+                <div class="card-content">
+                    <span class="label">Total Predictions</span>
+                    <h3 id="stat-predictions">-</h3>
+                </div>
+            </div>
+            <div class="card summary-card">
+                <div class="card-icon green"><i class="fa-solid fa-check"></i></div>
+                <div class="card-content">
+                    <span class="label">System Status</span>
+                    <h3 id="stat-status" class="text-green">Checking...</h3>
+                </div>
+            </div>
+        </section>
+
+        <div class="main-grid">
+            <div class="left-column">
+                <section class="card rankings-section">
+                    <div class="section-header">
+                        <div class="header-icon"><i class="fa-solid fa-list-ol"></i></div>
+                        <div>
+                            <h3>Weekly Rankings</h3>
+                            <p>View the top 15 gateways for a selected week</p>
+                        </div>
+                    </div>
+                    <div class="controls">
+                        <div class="input-group">
+                            <label for="week-select">Select Week</label>
+                            <div class="select-wrapper">
+                                <i class="fa-regular fa-calendar calendar-icon"></i>
+                                <select id="week-select" disabled>
+                                    <option value="">Loading weeks...</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button id="load-rankings-btn" class="btn btn-primary" disabled>
+                            <i class="fa-solid fa-rotate"></i> Load Rankings
+                        </button>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="rankings-table">
+                            <thead>
+                                <tr>
+                                    <th>Rank</th>
+                                    <th>Gateway ID</th>
+                                    <th>Score</th>
+                                    <th>Reason</th>
+                                </tr>
+                            </thead>
+                            <tbody id="rankings-body">
+                                <tr>
+                                    <td colspan="4" class="empty-state">Select a week and load rankings to view data.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="right-column">
+                <section class="card explanation-section">
+                    <div class="section-header">
+                        <div class="header-icon blue"><i class="fa-solid fa-magnifying-glass"></i></div>
+                        <div>
+                            <h3>Gateway Explanation</h3>
+                            <p>Get detailed explanation for a specific gateway</p>
+                        </div>
+                    </div>
+                    <div class="explanation-form">
+                        <div class="input-group">
+                            <label for="gateway-id">Enter Gateway ID</label>
+                            <input type="text" id="gateway-id" placeholder="e.g., GW-8F3A2C1D..." disabled>
+                        </div>
+                        <button id="get-explanation-btn" class="btn btn-purple" disabled>
+                            <i class="fa-solid fa-wand-magic-sparkles"></i> Get Explanation
+                        </button>
+                    </div>
+                    <div id="explanation-result" class="info-box">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <p>Select a week from rankings and enter a Gateway ID to see why it was ranked.</p>
+                    </div>
+                </section>
+
+                <section class="card run-section">
+                    <div class="section-header">
+                        <div class="header-icon blue"><i class="fa-solid fa-rotate"></i></div>
+                        <div>
+                            <h3>Refresh Rankings</h3>
+                            <p>Reload telemetry data and recompute rankings (API /run)</p>
+                        </div>
+                    </div>
+                    <button id="run-now-btn" class="btn btn-success full-width">
+                        <i class="fa-solid fa-play"></i> Run Now
+                    </button>
+                    
+                    <div id="run-status-container" class="run-status hidden">
+                        <div class="status-icon"><i class="fa-solid fa-check"></i></div>
+                        <div class="status-details">
+                            <div class="status-grid">
+                                <div>
+                                    <span class="label">Last Run Status</span>
+                                    <strong class="text-green">Success</strong>
+                                </div>
+                                <div>
+                                    <span class="label">Total Rows</span>
+                                    <strong id="run-rows">-</strong>
+                                </div>
+                                <div>
+                                    <span class="label">Weeks</span>
+                                    <strong id="run-weeks">-</strong>
+                                </div>
+                            </div>
+                            <p class="status-msg">Data loaded and rankings computed successfully.</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="card download-section">
+                    <div class="download-content">
+                        <div class="header-icon blue"><i class="fa-regular fa-file-lines"></i></div>
+                        <div>
+                            <h3>Download Predictions</h3>
+                            <p>Download the complete predictions.csv file</p>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline" id="download-csv-btn">
+                        <i class="fa-solid fa-download"></i> Download CSV
+                    </button>
+                </section>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p><strong>NEXORA 2026</strong> | Gateway Operations – Field Visit Prioritization</p>
+            <p class="tagline">"Reliable Networks for a Connected Tomorrow"</p>
+        </div>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -23,6 +23,9 @@ The primary uses were:
 - **Edge case analysis** — identifying scenarios such as missing data directories,
   malformed timestamps, empty datasets, unknown gateways, unavailable weeks, and
   the cache-state behaviour during a failed reload.
+- **Frontend architecture & integration** — UI implementation, diagnosing browser
+  CORS issues, and building the lightweight standard-library proxy `frontend/server.py`
+  to keep the backend unchanged.
 - **Test failure diagnosis** — helping interpret test failure output and reason
   about what the failure indicated.
 - **Documentation** — drafting README.md, DECISIONS.md, and this document.
@@ -104,6 +107,8 @@ basis of the generation alone. Specific verification steps carried out:
 - **API endpoints manually verified** against expected behaviour: valid requests,
   malformed dates, unknown weeks, unknown gateways, missing parameters, and
   pre-run state.
+- **Frontend manually verified** against API behavior and predictions.csv validity.
+- **Backend remained completely locked** during UI development.
 - **Git safety verified.** `data/`, `03-challenge-data/`, and `*.zip` are excluded
   by `.gitignore` and confirmed absent from `git status`.
 
