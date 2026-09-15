@@ -33,6 +33,17 @@ handling, and testing.
 The recording demonstrates the dashboard, weekly rankings, gateway explanations,
 rerun functionality, API documentation, automated tests, and final validation.
 
+## Key Features
+
+- 📊 Weekly top-15 gateway rankings
+- 🔎 Gateway-level ranking explanations
+- 🔄 On-demand ranking recomputation
+- 🌐 FastAPI REST API
+- 🖥️ Lightweight web dashboard
+- 🧪 57 automated tests including E2E and regression coverage
+- ✅ Official submission validator passes
+- 🔌 Swappable ranking strategy
+
 ---
 
 ## 2. Solution Architecture
