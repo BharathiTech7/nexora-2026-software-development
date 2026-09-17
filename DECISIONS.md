@@ -10,7 +10,7 @@ primary alternative was, why the choice was made, and what was traded away.
 
 ### Decision
 
-We selected Software Development as the primary discipline for this challenge submission.
+I selected Software Development as the primary discipline for this challenge submission.
 
 ### Alternative
 
@@ -18,7 +18,7 @@ Select a different discipline: Data Science, ML, Data Engineering, DevOps, or ML
 
 ### Why
 
-Our strongest relevant contribution for this challenge is building reliable software
+My strongest relevant contribution for this challenge is building reliable software
 around the supplied ranking baseline. The work undertaken — a data loading layer,
 a swappable ranking interface, a service layer, a Web API with three functional
 endpoints, deliberate error handling, and an automated test suite of 57 tests
